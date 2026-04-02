@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediSense AI — Smart Health Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+
+<!-- ── NAV ──────────────────────────────────────────────────────────────── -->
+<nav class="nav">
+  <div class="nav-brand">
+    <span class="nav-pulse"></span>
+    MediSense <em>AI</em>
+  </div>
+  <div class="nav-links">
+    <button class="nav-btn active" data-section="symptom">Symptom Checker</button>
+    <button class="nav-btn" data-section="bmi">BMI Calculator</button>
+    <button class="nav-btn" data-section="reminders">Med Reminders</button>
+    <button class="nav-btn" data-section="history">Health History</button>
+  </div>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────────────────────────────── -->
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">AI-Powered Health Intelligence</p>
+    <h1 class="hero-title">Your Health, <em>Decoded.</em></h1>
+    <p class="hero-sub">Instant symptom analysis · Medicine reminders · BMI tracking · Health history</p>
+    <div class="hero-tip-card" id="tipCard">
+      <span class="tip-icon">✦</span>
+      <span id="tipText">Loading health tip...</span>
+    </div>
+  </div>
+  <div class="hero-ecg">
+    <svg viewBox="0 0 800 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <polyline class="ecg-line" points="0,40 80,40 120,40 140,5 160,75 175,40 200,40 220,40 260,40 280,10 295,70 310,40 340,40 400,40 420,40 460,5 480,75 495,40 520,40 560,40 580,10 600,70 615,40 640,40 700,40 740,40 760,5 780,75 800,40"/>
+    </svg>
+  </div>
+</header>
+
+<!-- ── MAIN CONTENT ──────────────────────────────────────────────────────── -->
+<main class="main">
+
+  <!-- SYMPTOM CHECKER -->
+  <section class="section active" id="section-symptom">
+    <div class="section-header">
+      <h2>Symptom Checker</h2>
+      <p>Describe your symptoms below. Our AI will analyze them and suggest possible conditions.</p>
+    </div>
+    <div class="card symptom-card">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Describe your symptoms</label>
+          <textarea id="symptomsInput" placeholder="e.g. fever, headache, cough, sore throat..." rows="3"></textarea>
+          <div class="symptom-chips" id="symptomChips">
+            <span class="chip-label">Quick add:</span>
+            <button class="chip" onclick="addChip('fever')">Fever</button>
+            <button class="chip" onclick="addChip('headache')">Headache</button>
+            <button class="chip" onclick="addChip('cough')">Cough</button>
+            <button class="chip" onclick="addChip('fatigue')">Fatigue</button>
+            <button class="chip" onclick="addChip('nausea')">Nausea</button>
+            <button class="chip" onclick="addChip('dizziness')">Dizziness</button>
+            <button class="chip" onclick="addChip('chest pain')">Chest Pain</button>
+            <button class="chip" onclick="addChip('rash')">Rash</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" id="ageInput" placeholder="e.g. 28" min="1" max="120" />
+        </div>
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="genderInput">
+            <option value="prefer not to say">Prefer not to say</option>
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="non-binary">Non-binary</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="analyzeSymptoms()">
+        <span class="btn-icon">⚕</span> Analyze Symptoms
+      </button>
+    </div>
+
+    <div class="result-area" id="resultArea" style="display:none"></div>
+  </section>
+
+  <!-- BMI CALCULATOR -->
+  <section class="section" id="section-bmi">
+    <div class="section-header">
+      <h2>BMI Calculator</h2>
+      <p>Calculate your Body Mass Index and get personalized health insights.</p>
+    </div>
+    <div class="card bmi-card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Weight (kg)</label>
+          <input type="number" id="weightInput" placeholder="e.g. 70" />
+        </div>
+        <div class="form-group">
+          <label>Height (cm)</label>
+          <input type="number" id="heightInput" placeholder="e.g. 175" />
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="calculateBMI()">
+        <span class="btn-icon">⚖</span> Calculate BMI
+      </button>
+      <div class="bmi-result" id="bmiResult" style="display:none"></div>
+    </div>
+    <div class="bmi-scale-card card">
+      <h3>BMI Reference Scale</h3>
+      <div class="bmi-scale">
+        <div class="scale-bar">
+          <div class="scale-seg underweight"><span>Underweight</span><small>&lt; 18.5</small></div>
+          <div class="scale-seg normal"><span>Normal</span><small>18.5–24.9</small></div>
+          <div class="scale-seg overweight"><span>Overweight</span><small>25–29.9</small></div>
+          <div class="scale-seg obese"><span>Obese</span><small>≥ 30</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MED REMINDERS -->
+  <section class="section" id="section-reminders">
+    <div class="section-header">
+      <h2>Medicine Reminders</h2>
+      <p>Never miss a dose. Add your medications and stay on track.</p>
+    </div>
+    <div class="card">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Medicine Name</label>
+          <input type="text" id="medName" placeholder="e.g. Metformin" />
+        </div>
+        <div class="form-group">
+          <label>Dosage</label>
+          <input type="text" id="medDosage" placeholder="e.g. 500mg" />
+        </div>
+        <div class="form-group">
+          <label>Time</label>
+          <input type="time" id="medTime" />
+        </div>
+        <div class="form-group">
+          <label>Frequency</label>
+          <select id="medFrequency">
+            <option value="daily">Daily</option>
+            <option value="twice daily">Twice Daily</option>
+            <option value="weekly">Weekly</option>
+            <option value="as needed">As Needed</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="addReminder()">
+        <span class="btn-icon">＋</span> Add Reminder
+      </button>
+    </div>
+    <div id="reminderList" class="reminder-list"></div>
+  </section>
+
+  <!-- HEALTH HISTORY -->
+  <section class="section" id="section-history">
+    <div class="section-header">
+      <h2>Health History</h2>
+      <p>Your past symptom analyses, all in one place.</p>
+    </div>
+    <div id="historyList" class="history-list">
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <p>No history yet. Run a symptom analysis to get started.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── FOOTER ────────────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <p>
+    MediSense AI is a <strong>prototype</strong> for educational & hackathon purposes only.<br />
+    <em>Not a substitute for professional medical advice. Always consult a qualified physician.</em>
+  </p>
+  <p class="footer-meta">Built with ♥ for Health Tech Innovation · © 2024 MediSense AI</p>
+</footer>
+
+<div class="loader" id="loader" style="display:none">
+  <div class="loader-inner">
+    <div class="loader-pulse"></div>
+    <span>Analyzing...</span>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
